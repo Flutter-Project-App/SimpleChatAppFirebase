@@ -20,6 +20,18 @@ dependencies:
   flutter_svg:
   # Local Persist
   shared_preferences:
+  cupertino_icons:
+  firebase_core:
+  firebase_auth:
+  google_sign_in:
+  cloud_firestore:
+  fluttertoast:
+  image_picker:
+  firebase_storage:
+  intl:
+  firebase_messaging:
+  flutter_local_notifications:
+  photo_view:
 
 dev_dependencies:
   flutter_test:
@@ -31,3 +43,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icons/
+    - assets/images/
