@@ -1,4 +1,5 @@
-# flutter_application
+# Chat app
+Chat app using Firebase
 
 ## Structure
 - assets
