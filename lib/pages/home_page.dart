@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_application/data/models/user_chat.dart';
+import 'package:flutter_application/pages/settings_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../widgets/loading.dart';
 import '../utils/utils.dart';
@@ -67,20 +68,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void onItemMenuPress(Choice choice) {
     if (choice.title == "Log out") {
-      handleSignOut();
+      openDialog(true);
     } else {
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatSetting()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsBar()));
     }
   }
 
   void showNotification(RemoteNotification remoteNotification) async {}
 
   Future<bool> onBackPress() {
-    openDialog();
+    openDialog(false);
     return Future.value(false);
   }
 
-  Future<Null> openDialog() async {
+  Future<Null> openDialog(bool isLogout) async {
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -91,26 +92,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: themeColor,
                 margin: EdgeInsets.all(0),
                 padding: EdgeInsets.only(bottom: 10, top: 10),
-                height: 100,
+                height: 120,
                 child: Column(
                   children: <Widget>[
                     Container(
                       child: Icon(
-                        Icons.exit_to_app,
+                        isLogout ? Icons.logout : Icons.exit_to_app,
                         size: 30,
                         color: Colors.white,
                       ),
                       margin: EdgeInsets.only(bottom: 10),
                     ),
                     Text(
-                      "Exit app",
+                      isLogout ? "Log out" : "Exit app",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Are you sure to exit app?",
+                      isLogout ? "Are you sure to log out?" : "Are you sure to exit app?",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -154,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       margin: EdgeInsets.only(right: 10.0),
                     ),
                     Text(
-                      "Cancel",
+                      "Yes",
                       style: TextStyle(
                           color: primaryColor, fontWeight: FontWeight.bold),
                     )
@@ -167,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         break;
       case 1:
-        exit(0);
+        isLogout ? handleSignOut() : exit(0);
     }
   }
 
@@ -271,57 +272,79 @@ class _HomeScreenState extends State<HomeScreen> {
           child: TextButton(
             child: Row(
               children: <Widget>[
-                // Material(
-                //   child: userChat.photoUrl.isNotEmpty
-                //       ? Image.network(
-                //           userChat.photoUrl,
-                //           fit: BoxFit.cover,
-                //           width: 50,
-                //           height: 50,
-                //           loadingBuilder: (BuildContext context, Widget child,
-                //               ImageChunkEven? loadingProgress) {
-                //             if (loadingProgress == null) return child;
-                //             return Container(
-                //               width: 50,
-                //               height: 50,
-                //               child: Center(
-                //                 child: CircularProgressIndicator(
-                //                   color: primaryColor,
-                //                   // value: loadingProgress.expected,
-                //                 ),
-                //               ),
-                //             );
-                //           },
-                //           errorBuilder: (context, object, stackTrace) {
-                //             return Icon(
-                //               Icons.account_circle,
-                //               size: 50,
-                //               color: greyColor,
-                //             );
-                //           },
-                //         )
-                //       : Icon(Icons.account_circle, size: 50, color: greyColor),
-                //   borderRadius: BorderRadius.all(Radius.circular(25)),
-                //   clipBehavior: Clip.hardEdge,
-                // ),
+                Material(
+                  child: userChat.photoUrl.isNotEmpty
+                      ? Image.network(
+                          userChat.photoUrl,
+                          fit: BoxFit.cover,
+                          width: 50,
+                          height: 50,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              width: 50,
+                              height: 50,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: primaryColor,
+                                  // value: loadingProgress.expected,
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, object, stackTrace) {
+                            return Icon(
+                              Icons.account_circle,
+                              size: 50,
+                              color: greyColor,
+                            );
+                          },
+                        )
+                      : Icon(Icons.account_circle, size: 50, color: greyColor),
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  clipBehavior: Clip.hardEdge,
+                ),
                 Flexible(
                     child: Container(
                   child: Column(
                     children: <Widget>[
                       Container(
-                        child: Text(
-                          'Nickname: ${userChat.nickname}',
-                          maxLines: 1,
-                          style: TextStyle(color: primaryColor),
+                        child: RichText(
+                          text: TextSpan(
+                              style: DefaultTextStyle.of(context).style,
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: 'Nickname: ',
+                                    style: TextStyle(
+                                        color: greyColor,
+                                        fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text: userChat.nickname,
+                                    style: TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.bold)),
+                              ]),
                         ),
                         alignment: Alignment.centerLeft,
                         margin: EdgeInsets.fromLTRB(10, 0, 0, 5),
                       ),
                       Container(
-                        child: Text(
-                          'About me: ${userChat.aboutMe}',
-                          maxLines: 1,
-                          style: TextStyle(color: primaryColor),
+                        child: RichText(
+                          text: TextSpan(
+                              style: DefaultTextStyle.of(context).style,
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text: 'About me: ',
+                                    style: TextStyle(
+                                        color: greyColor,
+                                        fontWeight: FontWeight.bold)),
+                                TextSpan(
+                                    text: userChat.aboutMe,
+                                    style: TextStyle(
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.bold)),
+                              ]),
                         ),
                         alignment: Alignment.centerLeft,
                         margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
