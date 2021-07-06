@@ -14,6 +14,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../application.dart';
+import 'chat_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.currentUserId}) : super(key: key);
@@ -70,7 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (choice.title == "Log out") {
       openDialog(true);
     } else {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsBar()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SettingsBar()));
     }
   }
 
@@ -111,7 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      isLogout ? "Are you sure to log out?" : "Are you sure to exit app?",
+                      isLogout
+                          ? "Are you sure to log out?"
+                          : "Are you sure to exit app?",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -356,7 +360,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             onPressed: () {
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => Chat()))
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Chat(
+                            peerId: userChat.id,
+                            peerAvatar: userChat.photoUrl,
+                          )));
             },
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(greyColor2),
