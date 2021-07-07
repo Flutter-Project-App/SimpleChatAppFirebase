@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -31,11 +32,14 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   TextEditingController? controllerNickname;
-  TextEditingController? controllerAboutme;
+  TextEditingController? controllerAboutMe;
 
   SharedPreferences? prefs;
+  String fNickname = '';
+  String fAboutMe = '';
+  String fPhotoUrl = '';
 
-  String id = '';
+  String? id = FirebaseAuth.instance.currentUser?.uid;
   String nickname = '';
   String aboutMe = '';
   String photoUrl = '';
@@ -55,28 +59,33 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void readLocal() async {
     prefs = await SharedPreferences.getInstance();
-    id = prefs?.getString('id') ?? '';
-    nickname = prefs?.getString('nickname') ?? '';
-    aboutMe = prefs?.getString('aboutMe') ?? '';
-    photoUrl = prefs?.getString('photoUrl') ?? '';
+    await FirebaseFirestore.instance.collection('users').doc(id).get().then((DocumentSnapshot documentSnapshot) {
+      fNickname = documentSnapshot.get('nickname');
+      // fAboutMe = documentSnapshot.get('aboutMe');
+      // fPhotoUrl = documentSnapshot.get('photoUrl');
+    });
+    id = prefs?.getString('id') ?? FirebaseAuth.instance.currentUser?.uid;
+    nickname = prefs?.getString('nickname') ?? "";
+    aboutMe = prefs?.getString('aboutMe') ?? "";
+    photoUrl = prefs?.getString('photoUrl') ?? "";
 
     controllerNickname = TextEditingController(text: nickname);
-    controllerAboutme = TextEditingController(text: aboutMe);
+    controllerAboutMe = TextEditingController(text: aboutMe);
 
     setState(() {});
   }
 
   Future getImage() async {
     ImagePicker imagePicker = ImagePicker();
-    PickedFile? pickerFile = await imagePicker
+    PickedFile? pickedFile = await imagePicker
         .getImage(source: ImageSource.gallery)
         .catchError((err) {
       Fluttertoast.showToast(msg: err.toString());
     });
 
     File? image;
-    if (imagePicker != null) {
-      image = File(pickerFile!.path);
+    if (pickedFile != null) {
+      image = File(pickedFile.path);
     }
 
     if (image != null) {
@@ -89,8 +98,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future uploadFile() async {
-    String fileName = id;
-    Reference reference = FirebaseStorage.instance.ref().child(fileName);
+    String? fileName = id;
+    Reference reference = FirebaseStorage.instance.ref().child(fileName!);
     UploadTask uploadTask = reference.putFile(avatarImageFile!);
     try {
       TaskSnapshot snapshot = await uploadTask;
@@ -291,7 +300,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             hintText: 'Fun, like travel and play PES...',
                             contentPadding: EdgeInsets.all(5),
                             hintStyle: TextStyle(color: greyColor)),
-                        controller: controllerAboutme,
+                        controller: controllerAboutMe,
                         onChanged: (value) {
                           aboutMe = value;
                         },

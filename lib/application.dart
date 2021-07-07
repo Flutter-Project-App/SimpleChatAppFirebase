@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
-import 'package:flutter_application/pages/login_page.dart';
+import '../pages/login_page.dart';
 import 'themes.dart';
 
 // class Application extends StatefulWidget {

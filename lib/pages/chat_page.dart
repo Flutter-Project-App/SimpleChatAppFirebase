@@ -1,10 +1,11 @@
 import 'dart:io';
-
+import 'dart:developer' as developer;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/widgets/full_photo.dart';
-import 'package:flutter_application/widgets/loading.dart';
+import '../widgets/full_photo.dart';
+import '../widgets/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -53,7 +54,7 @@ class _ChatPageState extends State<ChatPage> {
 
   String peerId;
   String peerAvatar;
-  String? id;
+  String? id = FirebaseAuth.instance.currentUser?.uid;
 
   List<QueryDocumentSnapshot> listMessage = new List.from([]);
   int _limit = 20;
@@ -99,7 +100,7 @@ class _ChatPageState extends State<ChatPage> {
 
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
-    id = prefs?.getString('id') ?? "";
+    // id = prefs?.getString('id') ?? "";
     if (id.hashCode <= peerId.hashCode) {
       groupChatId = '$id-$peerId';
     } else {
@@ -486,6 +487,9 @@ class _ChatPageState extends State<ChatPage> {
         isShowSticker = false;
       });
     } else {
+      developer.log('uid : $id', name: 'ChatPage');
+      developer.log('uid : ${FirebaseAuth.instance.currentUser?.uid}',
+          name: 'ChatPage');
       FirebaseFirestore.instance
           .collection('users')
           .doc(id)

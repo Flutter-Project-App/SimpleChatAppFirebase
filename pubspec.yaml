@@ -1,4 +1,4 @@
-name: flutter_application
+name: ChatApp
 description: A new Flutter project.
 version: 1.0.0+1
 
@@ -36,20 +36,18 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.8.0"
   build_runner:
   json_serializable:
   freezed:
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/appchat.png"
+
 flutter:
   uses-material-design: true
   assets:
     - assets/icons/
-    - assets/images/mimi1.gif
-    - assets/images/mimi2.gif
-    - assets/images/mimi3.gif
-    - assets/images/mimi4.gif
-    - assets/images/mimi5.gif
-    - assets/images/mimi6.gif
-    - assets/images/mimi7.gif
-    - assets/images/mimi8.gif
-    - assets/images/mimi9.gif
-    - assets/images/img_not_available.jpeg
+    - assets/images/

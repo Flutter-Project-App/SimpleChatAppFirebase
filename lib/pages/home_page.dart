@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_application/data/models/user_chat.dart';
-import 'package:flutter_application/pages/settings_page.dart';
+import '../data/models/user_chat.dart';
+import '../pages/settings_page.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../widgets/loading.dart';
 import '../utils/utils.dart';
@@ -50,12 +50,67 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     registerNotification();
     configLocalNotification();
-    listScrollController.addListener((scrollListener));
+    listScrollController.addListener(scrollListener);
   }
 
-  void registerNotification() {}
+  void registerNotification() {
+    firebaseMessaging.requestPermission();
 
-  void configLocalNotification() {}
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("onMessage: $message");
+      if (message.notification != null) {
+        showNotification(message.notification!);
+      }
+      return;
+    });
+
+    firebaseMessaging.getToken().then((token) {
+      print("token: $token");
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserId)
+          .update({'pushToken': token});
+    }).catchError((err) {
+      Fluttertoast.showToast(msg: err.message.toString());
+    });
+  }
+
+  void configLocalNotification() {
+    AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+    IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings();
+    InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  void showNotification(RemoteNotification remoteNotification) async {
+    AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            Platform.isAndroid
+                ? 'com.mobile.flutter_application'
+                : "com.mobile.flutterApplication",
+            "Chat App",
+            "Chat with friends",
+            playSound: true,
+            enableVibration: true,
+            importance: Importance.max,
+            priority: Priority.high);
+
+    IOSNotificationDetails iOSPlatformChannelSpecifics =
+        IOSNotificationDetails();
+    NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics);
+
+    print(remoteNotification);
+
+    await flutterLocalNotificationsPlugin.show(0, remoteNotification.title,
+        remoteNotification.body, platformChannelSpecifics,
+        payload: null);
+  }
 
   void scrollListener() {
     if (listScrollController.offset >=
@@ -75,8 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
           context, MaterialPageRoute(builder: (context) => SettingsBar()));
     }
   }
-
-  void showNotification(RemoteNotification remoteNotification) async {}
 
   Future<bool> onBackPress() {
     openDialog(false);
@@ -244,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return ListView.builder(
                       padding: EdgeInsets.all(10),
                       itemBuilder: (context, index) =>
-                          buildItem(context, snapshot.data?.docs[index])!,
+                          buildItem(context, snapshot.data?.docs[index]),
                       itemCount: snapshot.data?.docs.length,
                       controller: listScrollController,
                     );
@@ -266,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget? buildItem(BuildContext context, DocumentSnapshot? document) {
+  Widget buildItem(BuildContext context, DocumentSnapshot? document) {
     if (document != null) {
       UserChat userChat = UserChat.fromDocument(document);
       if (userChat.id == currentUserId) {
@@ -292,7 +345,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Center(
                                 child: CircularProgressIndicator(
                                   color: primaryColor,
-                                  // value: loadingProgress.expected,
+                                  value: loadingProgress.expectedTotalBytes !=
+                                              null &&
+                                          loadingProgress.expectedTotalBytes !=
+                                              null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
                                 ),
                               ),
                             );

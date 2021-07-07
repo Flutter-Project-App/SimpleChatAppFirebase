@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:ChatApp/data/models/user_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/utils/colors.dart';
-import 'package:flutter_application/widgets/loading.dart';
+import '../utils/colors.dart';
+import '../widgets/loading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key, required this.title}) : super(key: key);
+  LoginScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -33,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    this.isSignedIn();
+    isSignedIn();
   }
 
   void isSignedIn() async {
@@ -89,9 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
           await prefs?.setString('photoUrl', currentUser!.photoURL ?? "");
         } else {
           DocumentSnapshot documentSnapshot = documents[0];
-          // UserChat userChat = UserChat.fromDocument(documentSnapshot);
+          UserChat userChat = UserChat.fromDocument(documentSnapshot);
 
-          // await prefs?.setString('id', userChat.uid);
+          await prefs?.setString('id', userChat.id);
+          await prefs?.setString('nickname', userChat.id);
+          await prefs?.setString('photoUrl', userChat.id);
+          await prefs?.setString('aboutMe', userChat.id);
         }
         
         Fluttertoast.showToast(msg: "Sign in success");
@@ -106,6 +110,11 @@ class _LoginScreenState extends State<LoginScreen> {
           isLoading = false;
         });
       }
+    } else {
+      Fluttertoast.showToast(msg: "Can not init google sign in");
+      this.setState(() {
+        isLoading = false;
+      });
     }
   }
 
