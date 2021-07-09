@@ -16,8 +16,9 @@ class SettingsBar extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'SETTINGS',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: headerColor, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: themeColor,
         centerTitle: true,
       ),
       body: SettingsPage(),
@@ -61,13 +62,13 @@ class _SettingsPageState extends State<SettingsPage> {
     prefs = await SharedPreferences.getInstance();
     await FirebaseFirestore.instance.collection('users').doc(id).get().then((DocumentSnapshot documentSnapshot) {
       fNickname = documentSnapshot.get('nickname');
-      // fAboutMe = documentSnapshot.get('aboutMe');
-      // fPhotoUrl = documentSnapshot.get('photoUrl');
+      fAboutMe = documentSnapshot.get('aboutMe');
+      fPhotoUrl = documentSnapshot.get('photoUrl');
     });
-    id = prefs?.getString('id') ?? FirebaseAuth.instance.currentUser?.uid;
-    nickname = prefs?.getString('nickname') ?? "";
-    aboutMe = prefs?.getString('aboutMe') ?? "";
-    photoUrl = prefs?.getString('photoUrl') ?? "";
+    // id = prefs?.getString('id') ?? FirebaseAuth.instance.currentUser?.uid;
+    nickname = fNickname;
+    aboutMe = fAboutMe;
+    photoUrl = fPhotoUrl;
 
     controllerNickname = TextEditingController(text: nickname);
     controllerAboutMe = TextEditingController(text: aboutMe);

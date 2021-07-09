@@ -253,8 +253,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text(
           "HOME CHAT",
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: headerColor, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: themeColor,
         centerTitle: true,
         actions: <Widget>[
           PopupMenuButton<Choice>(
@@ -424,6 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(
                       builder: (context) => Chat(
                             peerId: userChat.id,
+                            peerName: userChat.nickname,
                             peerAvatar: userChat.photoUrl,
                           )));
             },

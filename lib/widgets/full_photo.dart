@@ -13,8 +13,9 @@ class FullPhoto extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "FULL PHOTO",
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: headerColor, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: themeColor,
         centerTitle: true,
       ),
       body: FullPhotoScreen(url: url),

@@ -13,10 +13,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/utils.dart';
 
 class Chat extends StatelessWidget {
-  const Chat({Key? key, required this.peerId, required this.peerAvatar})
+  const Chat({Key? key, required this.peerId, required this.peerAvatar, required this.peerName})
       : super(key: key);
 
   final String peerId;
+  final String peerName;
   final String peerAvatar;
 
   @override
@@ -24,13 +25,15 @@ class Chat extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "CHAT",
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+        peerName,
+          style: TextStyle(color: headerColor, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: themeColor,
         centerTitle: true,
       ),
       body: ChatPage(
         peerId: peerId,
+        peerName: peerName,
         peerAvatar: peerAvatar,
       ),
     );
@@ -38,10 +41,11 @@ class Chat extends StatelessWidget {
 }
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.peerId, required this.peerAvatar})
+  const ChatPage({Key? key, required this.peerId, required this.peerAvatar, required this.peerName})
       : super(key: key);
 
   final String peerId;
+  final String peerName;
   final String peerAvatar;
 
   @override
@@ -534,24 +538,24 @@ class _ChatPageState extends State<ChatPage> {
                   onPressed: () => onSendMessage('mimi1', 2),
                   child: Image.asset(
                     'assets/images/mimi1.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
               TextButton(
                   onPressed: () => onSendMessage('mimi2', 2),
                   child: Image.asset(
                     'assets/images/mimi2.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
               TextButton(
                   onPressed: () => onSendMessage('mimi3', 2),
                   child: Image.asset(
                     'assets/images/mimi3.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
             ],
@@ -563,24 +567,24 @@ class _ChatPageState extends State<ChatPage> {
                   onPressed: () => onSendMessage('mimi4', 2),
                   child: Image.asset(
                     'assets/images/mimi4.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
               TextButton(
                   onPressed: () => onSendMessage('mimi5', 2),
                   child: Image.asset(
                     'assets/images/mimi5.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
               TextButton(
                   onPressed: () => onSendMessage('mimi6', 2),
                   child: Image.asset(
                     'assets/images/mimi6.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
             ],
@@ -592,24 +596,24 @@ class _ChatPageState extends State<ChatPage> {
                   onPressed: () => onSendMessage('mimi7', 2),
                   child: Image.asset(
                     'assets/images/mimi7.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
               TextButton(
                   onPressed: () => onSendMessage('mimi8', 2),
                   child: Image.asset(
                     'assets/images/mimi8.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
               TextButton(
                   onPressed: () => onSendMessage('mimi9', 2),
                   child: Image.asset(
                     'assets/images/mimi9.gif',
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     fit: BoxFit.cover,
                   )),
             ],
